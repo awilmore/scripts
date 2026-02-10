@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/Users/adam/tmp/copper-bamboo/src/test/groovy/smoketest'
+let g:netrw_dirhist_2='/Users/adam/git/copper-bamboo/src/test'
+let g:netrw_dirhist_3='/Users/adam/git/buildeng-puppet/modules/repos'
+let g:netrw_dirhist_4='/Users/adam/git/copper-automated-tests/test/functional/copper/obi'
+let g:netrw_dirhist_5='/Users/adam'
+let g:netrw_dirhist_6='/private/var/folders/98/qfk_7ct15cl5nln4x2qqt7dh0000gn/T/20140101'

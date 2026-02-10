@@ -1,0 +1,11 @@
+#!/bin/bash
+
+export CLICOLOR=1
+export LSCOLORS=ExFxCxDxBxegedabagacad
+
+if [ -z "$1" ]; then
+  /bin/ls -lart
+else
+  /bin/ls -lart --color | grep "$1"
+fi
+

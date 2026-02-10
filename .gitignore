@@ -1,0 +1,15 @@
+BACKUP/
+DELETED/
+.vscode/
+archive/
+working/
+
+*.pyc
+.idea
+
+# Ignored scripts
+iam-assume-bauplatz.sh
+runner-tf-run.sh
+backups/
+*.bak
+*.backup

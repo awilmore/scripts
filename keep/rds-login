@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -e
+
+function rds-login() {
+  HOSTS=( $(aws rds describe-db-instances --query "DBInstances[].Endpoint.Address" --output text) )
+  HOSTS_ITER=0
+
+  for I in ${HOSTS[@]}
+  do
+      echo -e "${HOSTS_ITER}: ${I}"
+      HOSTS_ITER=$(expr $HOSTS_ITER + 1)
+  done
+
+  echo -ne "Select RDS: "
+  read HOST_ID_INDEX
+  echo ${HOST_ID_INDEX}
+  echo "Selected RDS: ${HOSTS[${HOST_ID_INDEX}]}"
+
+  USERS=("ro-iam-db-auth" "writer-iam-db-auth", "ssm-user")
+  USERS_ITER=0
+
+  for I in ${USERS[@]}
+  do
+      echo -e "${USERS_ITER}: ${I}"
+      USERS_ITER=$(expr $USERS_ITER + 1)
+  done
+
+  echo -ne "Select User (\"ssm-user\" which will ask for the username to fetch the credentials via ssm): "
+  read USER_ID_INDEX
+  echo ${USER_ID_INDEX}
+  echo "Selected User Option: ${USERS[${USER_ID_INDEX}]}"
+
+  if [[ "${USERS[${USER_ID_INDEX}]}" == "ssm-user" ]]; then
+    ENVIRONMENT=$(echo "${HOSTS[${HOST_ID_INDEX}]}" | sed 's/-/\ /g' | awk '{print $1}')
+    echo -ne "username i.e user-service OR user-service-migrations: "
+    read USER_NAME
+    echo -ne "db name: "
+    read DB
+    PGPASSWORD=$( aws ssm get-parameter --name /${ENVIRONMENT}/${USER_NAME}/db/${DB}/password   --with-decryption --query "Parameter.Value" --output text )
+    echo "Credentials for manual connection: "
+    echo "Hostname: ${HOSTS[${HOST_ID_INDEX}]}"
+    echo "Username: ${USER_NAME}"
+    echo "Password: $PGPASSWORD"
+    psql "host="${HOSTS[${HOST_ID_INDEX}]}" port=5432 dbname="${DB}" user="$USER_NAME" password="$PGPASSWORD""
+  else
+    PGPASSWORD="$(aws rds generate-db-auth-token --hostname "${HOSTS[${HOST_ID_INDEX}]}" --port 5432 --username "${USERS[${USER_ID_INDEX}]}")"
+    psql "host="${HOSTS[${HOST_ID_INDEX}]}" port=5432 dbname="${1:-postgres}" user="${USERS[${USER_ID_INDEX}]}" password="$PGPASSWORD""
+  fi
+}
+
+rds-login

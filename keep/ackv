@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e 
+
+if [ $# != 1 ]; then
+  echo "usage: $0 search_pattern"
+  exit 1
+fi
+
+PAT="$1"
+
+# Locate first match
+MATCH=$( ack -l "$PAT" | head -1 )
+
+if [ ! -z "$MATCH" ]; then
+  echo " * Found: $MATCH ... opening editor ..."
+  echo
+  vi $MATCH
+else
+  echo "No match found."
+fi

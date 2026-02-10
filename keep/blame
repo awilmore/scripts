@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+if [ $# != 1 ]; then
+  echo "usage: $0 path_to_file"
+  exit 1
+fi
+
+FILEPATH="$1"
+
+REPO="${PWD##*/}"
+
+# Create URL
+URL="https://github.com/mx51/${REPO}/blame/master/${FILEPATH}"
+
+open $URL

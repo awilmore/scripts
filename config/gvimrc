@@ -1,0 +1,24 @@
+""
+"" awilmore.com
+"" 
+
+" My preferences
+set directory=~/tmp/vi_swap
+map <D-l> :NERDTreeToggle<CR>
+
+" Colour scheme fallback:
+"colorscheme koehler
+
+colorscheme codeschool
+set guifont=Monaco:h11
+"let g:NERDTreeWinPos = "right"
+set guioptions-=T " Removes top toolbar
+set guioptions-=r " Removes right hand scroll bar
+set go-=L " Removes left hand scroll bar
+
+set number
+hi Search guibg=Blue
+
+" Hack to go wide
+set lines=70 columns=240
+

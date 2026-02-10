@@ -1,0 +1,75 @@
+[user]
+  name = Adam Wilmore
+  email = adam@mx51.io
+  signingkey = 24B49DA3612203075061669F112F6DBB16B2BCFE
+
+[core]
+  excludesfile = /Users/adam/.gitignore_global
+
+[url "git@github.com:"]
+  insteadOf = https://github.com/
+
+[color]
+  ui = auto
+
+[commit]
+  gpgsign = true
+
+[gpg]
+  program = gpg
+
+[diff]
+  tool = vimdiff
+  renameLimit = 1000
+
+[difftool]
+  prompt = false
+
+
+[alias]
+  d  = difftool
+  ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --graph --date=short
+  ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat --graph
+  ld = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative --graph
+  l  = log --pretty=format:"%C(yellow)%h\\ %Cred%cd\\ %Cblue[%cn]\\ %Creset%s" --decorate --date=short --graph
+  lh = log --pretty=format:"%C(yellow)%h%Cred%<(70,trunc)%d\\ %Creset%<(30,trunc)%s" --decorate --date=short
+  lt = for-each-ref --format '%(color:yellow)%(align:32,left)%(refname:short)%(end)%(color:red)%(taggerdate:short)%(align:30,left)%(color:blue) [%(taggername)]%(end)%(color:reset)\"%(subject)\"' refs/tags --sort=taggerdate
+  pl = pull origin $(git_current_branch)
+  p  = "!sh -c \"~/git/scripts/keep/gitp\""
+  f  = fetch origin
+  fp = "!sh -c \"~/git/scripts/keep/gitp && git fetch origin && git fetch --tags\""
+  pf = "!sh -c \"~/git/scripts/keep/gitp && git fetch origin && git fetch --tags\""
+  pu = "!sh -c \"git push origin `git rev-parse --abbrev-ref HEAD`\""
+  s  = status
+  t  = log --all --decorate --oneline --graph
+  c  = checkout -
+  m  = checkout master
+
+[push]
+  default = simple
+  recurseSubmodules = check
+
+[cola]
+  spellcheck = false
+
+[pull]
+  ff = only
+  rebase = false
+
+[column]
+  ui = auto
+
+[branch]
+  sort = -committerdate
+
+[gui]
+  pruneduringfetch = true
+
+[smartgit "submodule"]
+  fetchalways = false
+  update = true
+  initializenew = true
+
+[gc]
+  autoDetach = false
+
