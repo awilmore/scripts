@@ -82,6 +82,7 @@ alias mx-admin-groundcover='set-default-profile mx-admin-groundcover'
 alias mx-admin-hub-main-eng='set-default-profile mx-admin-hub-main-eng'
 alias mx-admin-hub-main-mc='set-default-profile mx-admin-hub-main-mc'
 alias mx-admin-hub-main-perf='set-default-profile mx-admin-hub-main-perf'
+alias mx-admin-hub-main-mx='set-default-profile mx-admin-hub-main-mx'
 alias mx-admin-identity='set-default-profile mx-admin-identity'
 alias mx-admin-main-cba='set-default-profile mx-admin-main-cba'
 alias mx-admin-main-eng='set-default-profile mx-admin-main-eng'
@@ -114,6 +115,7 @@ alias live-main-play='ekmx live-main-play'
 alias live-main-pospay='ekmx live-main-pospay'
 alias live-main-till='ekmx live-main-till'
 alias live-main-wbc='ekmx live-main-wbc'
+alias live-ops-shared='ekmx live-ops-shared'
 alias live-prod-integration='ekmx live-prod-integration'
 alias load-main-perf='ekmx load-main-perf'
 alias qa-main-eng='ekmx qa-main-eng'
@@ -210,9 +212,15 @@ alias dush='du -sh'
 alias psql='/Applications/pgAdmin\ 4.app/Contents/SharedSupport/psql'
 alias htop='sudo htop'
 alias kl='kubectl'
+alias ch='claude -p hello'
+alias aw='az-watch-build'
+
 
 # WARP
 alias warp='source ~/git/scripts/keep/warp-env.sh'
+
+# WARP for Claude and Gemini
+export NODE_EXTRA_CA_CERTS="$HOME/.agents/warp.pem"
 
 # Diff
 alias vimdiff=gvimdiff
@@ -222,6 +230,7 @@ alias diff=/Users/adam/git/scripts/keep/diff
 alias git=/opt/homebrew/bin/git
 alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 alias pr="pr.sh"
+alias compare="compare.sh"
 
 # Git add commit push function
 ga() {
@@ -243,7 +252,6 @@ alias mx51io="docker login -u aquam8 -p $DOCKER_PW_MX"
 alias e='open .'
 alias ssh='touch ~/.ssh/known_hosts && rm ~/.ssh/known_hosts && ssh -o StrictHostKeyChecking=no '
 alias gos="cd $GOS"
-alias aw=a
 alias devops="cd ~/git/devops"
 alias tf="cd ~/git/devops/tf"
 
@@ -363,6 +371,7 @@ function la() {
 ###################
 
 source ~/.bash_gcloud
+alias gauth="gcloud auth login adam@mx51.io"
 
 
 ###################
@@ -374,12 +383,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 
-###################
-# Groundcover
-###################
-
-export PATH=/Users/adam/.groundcover/bin:${PATH}
-
 
 ###################
 # Pulumi
@@ -387,3 +390,54 @@ export PATH=/Users/adam/.groundcover/bin:${PATH}
 
 # add Pulumi to the PATH
 export PATH=$PATH:/Users/adam/.pulumi/bin
+
+
+###################
+# Claude
+###################
+
+alias claude="claude --permission-mode auto"
+alias claudesafe="~/.local/bin/claude"
+
+alias kb="cd /Users/adam/claude/knowledge-base"
+
+claude-work() {
+  BROWSER=~/.local/bin/claude-open-chrome claude auth login
+}
+
+claude-personal() {
+  BROWSER=~/.local/bin/claude-open-safari claude auth login
+}
+
+claude-whoami() {
+  python3 -c "
+import json, os
+try:
+    with open(os.path.expanduser('~/.claude.json')) as f:
+        d = json.load(f)
+    a = d.get('oauthAccount', {})
+    print(f\"Account : {a.get('emailAddress', 'unknown')}\")
+except Exception as e:
+    print(f'Error: {e}')
+" 2>/dev/null
+}
+
+alias cs="cswap switch"
+
+
+###################
+# Gemini
+###################
+
+alias gemini="$HOME/.nvm/versions/node/v24.4.0/bin/gemini --model gemini-3.1-pro-preview --approval-mode=auto_edit"
+
+
+###################
+# Misc
+###################
+
+alias vm='ssh adam@192.168.0.50'
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/adam/.local/bin:$PATH"

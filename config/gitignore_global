@@ -16,3 +16,7 @@ compile-load-test-org.sh
 compile-load-test-transaction.sh
 compile-load-test-user.sh
 run-sonar.sh
+
+**/.claude/settings.local.json
+
+**/.claude/.cc-writes/
