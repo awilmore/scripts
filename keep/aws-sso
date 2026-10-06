@@ -20,7 +20,7 @@ RED='\033[0;31m'
 export AWS_DEFAULT_REGION=ap-southeast-2
 
 # Validate aws cli v2 is being used
-AWS_CLI_VERSION=$( aws --version | grep -Op "^aws-cli/2.*" )
+AWS_CLI_VERSION=$( aws --version | grep -o "^aws-cli/2[^ ]*" )
 if [ -z "$AWS_CLI_VERSION" ]; then
   echo -e "${RED}error: aws-sso requires AWS CLI v2 to be installed"
   exit 1
