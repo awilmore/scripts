@@ -1,0 +1,341 @@
+# ######################
+# # SSO Configuration ##
+# ######################
+[sso-session mx]
+sso_start_url=https://d-976768406c.awsapps.com/start
+sso_region=ap-southeast-2
+sso_registration_scopes=sso:account:access
+
+# ##############
+# # Legacy AP ##
+# ##############
+[profile ap-admin-prod-msp]
+aws_account_id=842050428373
+role_arn=arn:aws:iam::842050428373:role/identity-admin
+region=ap-southeast-2
+color=ff8040
+source_profile=saml-mx
+
+[profile ap-admin-audit]
+aws_account_id=453506268115
+role_arn=arn:aws:iam::453506268115:role/identity-admin
+region=ap-southeast-2
+color=000000
+source_profile=saml-mx
+
+# #############
+# # Cba OU ##
+# ###########
+[profile mx-admin-kms-cba]
+aws_account_id=096793159603
+role_arn=arn:aws:iam::096793159603:role/identity-admin
+region=ap-southeast-2
+color=1290c1
+source_profile=saml-mx
+
+[profile mx-admin-main-cba]
+aws_account_id=734169289386
+role_arn=arn:aws:iam::734169289386:role/identity-admin
+region=ap-southeast-2
+color=4210c1
+source_profile=saml-mx
+
+# ###########
+# # Fisvau OU ##
+# ###########
+[profile mx-admin-kms-fisvau]
+aws_account_id=254139300605
+role_arn=arn:aws:iam::254139300605:role/identity-admin
+region=ap-southeast-2
+color=0321c1
+source_profile=saml-mx
+
+[profile mx-admin-main-fisvau]
+aws_account_id=594881418373
+role_arn=arn:aws:iam::594881418373:role/identity-admin
+region=ap-southeast-2
+color=0321c1
+source_profile=saml-mx
+
+# ###########
+# # Eng OU ##
+# ###########
+[profile mx-admin-kms-eng]
+aws_account_id=154702648638
+role_arn=arn:aws:iam::530708157233:role/identity-admin
+region=ap-southeast-2
+color=0000
+source_profile=saml-mx
+
+[profile mx-admin-main-eng]
+aws_account_id=196655710609
+role_arn=arn:aws:iam::196655710609:role/identity-admin
+region=ap-southeast-2
+color=90d331
+source_profile=saml-mx
+
+# ###########
+# # Gko OU ##
+# ###########
+[profile mx-admin-kms-gko]
+aws_account_id=446303628675
+role_arn=arn:aws:iam::446303628675:role/identity-admin
+region=ap-southeast-2
+color=0000
+source_profile=saml-mx
+
+[profile mx-admin-main-gko]
+aws_account_id=042804869326
+role_arn=arn:aws:iam::042804869326:role/identity-admin
+region=ap-southeast-2
+color=90dcc1
+source_profile=saml-mx
+
+# ###########
+# # Next OU ##
+# ###########
+[profile mx-admin-kms-next]
+aws_account_id=953000223379
+role_arn=arn:aws:iam::953000223379:role/identity-admin
+region=ap-southeast-2
+color=459003
+source_profile=saml-mx
+
+[profile mx-admin-main-next]
+aws_account_id=410626092154
+role_arn=arn:aws:iam::410626092154:role/identity-admin
+region=ap-southeast-2
+color=9280c1
+source_profile=saml-mx
+
+# ###########
+# # Perf OU ##
+# ###########
+[profile mx-admin-kms-perf]
+aws_account_id=222997527464
+role_arn=arn:aws:iam::222997527464:role/identity-admin
+region=ap-southeast-2
+color=0000
+source_profile=saml-mx
+
+[profile mx-admin-main-perf]
+aws_account_id=918207991278
+role_arn=arn:aws:iam::918207991278:role/identity-admin
+region=ap-southeast-2
+color=0d3319
+source_profile=saml-mx
+
+# ###########
+# # Play OU ##
+# ###########
+[profile mx-admin-kms-play]
+aws_account_id=294473262324
+role_arn=arn:aws:iam::294473262324:role/identity-admin
+region=ap-southeast-2
+color=123456
+source_profile=saml-mx
+
+[profile mx-admin-main-play]
+aws_account_id=141710180152
+role_arn=arn:aws:iam::141710180152:role/identity-admin
+region=ap-southeast-2
+color=5bdcc1
+source_profile=saml-mx
+
+# ##############
+# # Pospay OU ##
+# ##############
+[profile mx-admin-kms-pospay]
+aws_account_id=911167918489
+role_arn=arn:aws:iam::911167918489:role/identity-admin
+region=ap-southeast-2
+color=0000
+source_profile=saml-mx
+
+[profile mx-admin-main-pospay]
+aws_account_id=257394483327
+role_arn=arn:aws:iam::257394483327:role/identity-admin
+region=ap-southeast-2
+color=90dcc1
+source_profile=saml-mx
+
+# ###########
+# # Till OU ##
+# ###########
+[profile mx-admin-kms-till]
+aws_account_id=441688828321
+role_arn=arn:aws:iam::441688828321:role/identity-admin
+region=ap-southeast-2
+color=0000
+source_profile=saml-mx
+
+[profile mx-admin-main-till]
+aws_account_id=122709731749
+role_arn=arn:aws:iam::122709731749:role/identity-admin
+region=ap-southeast-2
+color=fbdcc1
+source_profile=saml-mx
+
+# ###########
+# # Wbc OU ##
+# ###########
+[profile mx-admin-kms-wbc]
+aws_account_id=114096572168
+role_arn=arn:aws:iam::114096572168:role/identity-admin
+region=ap-southeast-2
+color=29f061
+source_profile=saml-mx
+
+[profile mx-admin-main-wbc]
+aws_account_id=180548302197
+role_arn=arn:aws:iam::180548302197:role/identity-admin
+region=ap-southeast-2
+color=0d3311
+source_profile=saml-mx
+
+# ##############
+# # AI OU ##
+# ##############
+[profile mx-admin-support-ai]
+aws_account_id=948098566325
+role_arn=arn:aws:iam::948098566325:role/identity-admin
+region=ap-southeast-2
+color=29f0a1
+source_profile=saml-mx
+
+# ##############
+# # External OU ##
+# ##############
+[profile mx-admin-groundcover]
+aws_account_id=676206928261
+role_arn=arn:aws:iam::676206928261:role/identity-admin
+region=ap-southeast-2
+color=5c5ca1
+source_profile=saml-mx
+
+# ##############
+# # Shared OU ##
+# ##############
+[profile mx-admin-tools]
+aws_account_id=567505611260
+role_arn=arn:aws:iam::567505611260:role/identity-admin
+region=ap-southeast-2
+color=5c5ca1
+source_profile=saml-mx
+
+[profile mx-admin-runner]
+aws_account_id=163489376817
+role_arn=arn:aws:iam::163489376817:role/identity-admin
+region=ap-southeast-2
+color=3c3ce3
+source_profile=saml-mx
+
+[profile mx-admin-domains]
+aws_account_id=154702648638
+role_arn=arn:aws:iam::154702648638:role/identity-admin
+region=ap-southeast-2
+color=a9a9de
+source_profile=saml-mx
+
+[profile mx-admin-ztna]
+aws_account_id=637423210695
+role_arn=arn:aws:iam::637423210695:role/identity-admin
+region=ap-southeast-2
+color=5c5ca1
+source_profile=saml-mx
+
+# ###################
+# # Integration OU ##
+# ###################
+[profile mx-admin-nonprod-integration]
+aws_account_id=730335666843
+role_arn=arn:aws:iam::730335666843:role/identity-admin
+region=ap-southeast-2
+color=dc13d4
+source_profile=saml-mx
+
+[profile mx-admin-prod-integration]
+aws_account_id=519839483382
+role_arn=arn:aws:iam::519839483382:role/identity-admin
+region=ap-southeast-2
+color=dc57d4
+source_profile=saml-mx
+
+# ############
+# # Core OU ##
+# ############
+[profile mx-admin-master]
+aws_account_id=188350903808
+role_arn=arn:aws:iam::188350903808:role/identity-admin
+region=ap-southeast-2
+color=dc13d4
+source_profile=saml-mx
+
+[profile mx-admin-audit]
+aws_account_id=967591973247
+role_arn=arn:aws:iam::967591973247:role/identity-admin
+region=ap-southeast-2
+color=dc57d4
+source_profile=saml-mx
+
+[profile mx-admin-identity]
+aws_account_id=345610073103
+role_arn=arn:aws:iam::345610073103:role/identity-admin
+region=ap-southeast-2
+color=bb9bb9
+source_profile=saml-mx
+
+# ############
+# # Hub OU ##
+# ############
+# ###############
+# # hub/eng OU ##
+# ###############
+[profile mx-admin-hub-main-eng]
+aws_account_id=419634667475
+role_arn=arn:aws:iam::419634667475:role/identity-admin
+region=ap-southeast-2
+color=dc13d4
+source_profile=saml-mx
+
+# ################
+# # hub/perf OU ##
+# ################
+[profile mx-admin-hub-main-perf]
+aws_account_id=601955974507
+role_arn=arn:aws:iam::601955974507:role/identity-admin
+region=ap-southeast-2
+color=dc13d4
+source_profile=saml-mx
+
+# ##############
+# # hub/mc OU ##
+# ##############
+[profile mx-admin-hub-main-mc]
+aws_account_id=120825648792
+role_arn=arn:aws:iam::120825648792:role/identity-admin
+region=ap-southeast-2
+color=dc57d4
+source_profile=saml-mx
+
+# ##############
+# # hub/mx OU ##
+# ##############
+[profile mx-admin-hub-main-mx]
+aws_account_id=719279823686
+role_arn=arn:aws:iam::719279823686:role/identity-admin
+region=ap-southeast-2
+source_profile=saml-mx
+
+# ##############
+# # Default   ##
+# ##############
+[profile default]
+aws_account_id=196655710609
+role_arn=arn:aws:iam::196655710609:role/identity-admin
+region=ap-southeast-2
+color=90d331
+source_profile=saml-mx
+
+[profile personal]
+region = ap-southeast-2

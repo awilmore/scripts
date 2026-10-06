@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# Globals
+ROLE_SELECTION=""
+LOGIN_REQUIRED=""
+
+###
+# usage: aws-sso aws_role_name (optional)
+#    eg: aws-sso aws-developer
+###
+
+if [ $# == 1 ]; then
+  ROLE_SELECTION="$1"
+fi
+
+# Log output colours
+RED='\033[0;31m'
+
+# Set aws region
+export AWS_DEFAULT_REGION=ap-southeast-2
+
+# Validate aws cli v2 is being used
+AWS_CLI_VERSION=$( aws --version | grep -Op "^aws-cli/2.*" )
+if [ -z "$AWS_CLI_VERSION" ]; then
+  echo -e "${RED}error: aws-sso requires AWS CLI v2 to be installed"
+  exit 1
+fi
+
+# Get existing token from the the sso cache file, if present
+TOKEN=$( cat ~/.aws/sso/cache/*.json 2>/dev/null | jq -r '.accessToken' | grep -v null )
+
+if [ -z "$TOKEN" ]; then
+  # No token, so login required
+  LOGIN_REQUIRED="1"
+else
+  # Check if credentails are still valid and have not expired
+  CHECK=$( aws sso list-accounts --access-token "$TOKEN" 2>&1 | grep "UnauthorizedException" )
+
+  if [ ! -z "$CHECK" ]; then
+    # Token expired, so login required
+    LOGIN_REQUIRED="1"
+  fi
+fi
+
+# Fail script on command error from this point
+set -e
+
+echo "LOGIN_REQUIRED: $LOGIN_REQUIRED"
+
+# Perform login if required
+if [ ! -z "$LOGIN_REQUIRED" ]; then
+  echo "Performing aws sso loging ..."
+
+  # Login via SSO using the mx session name
+  # The session name is relevant in the /.aws/config when defining the block "[sso-session mx]"
+  # On Linux (the remote workspace), the browser is on another machine. Thus use the device
+  # code: open the URL on the Mac or the phone, and type the code.
+  if [ "$(uname -s)" = "Linux" ]; then
+    aws sso login --sso-session mx --use-device-code
+  else
+    aws sso login --sso-session mx
+  fi
+
+  # Generate placeholder credentials file
+  cat <<EOF > ~/.aws/credentials
+[saml-mx]
+aws_access_key_id        = ...
+aws_secret_access_key    = ...
+aws_session_token        = ...
+EOF
+
+  # Get new token from the the sso cache file
+  TOKEN=$( cat ~/.aws/sso/cache/*.json | jq -r '.accessToken' | grep -v null )
+fi
+
+# Use cli arg if present
+if [ ! -z "$ROLE_SELECTION" ]; then
+  ROLE="$ROLE_SELECTION"
+else
+  # List available roles and allow selection
+  #
+  #
+  ROLES=( $(aws sso list-account-roles --access-token $TOKEN --account-id 345610073103 --query 'roleList[].roleName' --output text ) )
+  ITER=0
+  for I in ${ROLES[@]}
+  do
+    echo -e "${ITER}: ${I}"
+    ITER=$(expr $ITER + 1)
+  done
+  echo -ne "Select role: "
+  read -a ROLE_INDEX
+  ROLE="${ROLES[${ROLE_INDEX}]}"
+fi
+
+echo "Generating temporary credentials using role: $ROLE"
+
+# Get credentials
+CREDS=$( aws sso get-role-credentials --account-id 345610073103 --role-name $ROLE --access-token "$TOKEN" --region ap-southeast-2 )
+AWS_ACCESS_KEY_ID=$(echo $CREDS| jq -r ".roleCredentials | .accessKeyId")
+AWS_SECRET_ACCESS_KEY=$(echo $CREDS | jq -r ".roleCredentials | .secretAccessKey")
+AWS_SESSION_TOKEN=$(echo $CREDS| jq -r ".roleCredentials | .sessionToken")
+
+# Populate credentials fle with creds
+cat <<EOF > ~/.aws/credentials
+[saml-mx]
+aws_access_key_id        = ${AWS_ACCESS_KEY_ID}
+aws_secret_access_key    = ${AWS_SECRET_ACCESS_KEY}
+aws_session_token        = ${AWS_SESSION_TOKEN}
+EOF
