@@ -13,6 +13,13 @@ stern = "latest"
 opentofu = "1.13"
 fzf = "latest"
 
+# For the agent configuration (repo awilmore/agent-config): Node for fetch-mcp and
+# Gemini CLI, and the shell tools for "make check".
+node = "24"
+"npm:@google/gemini-cli" = "latest"
+shellcheck = "latest"
+shfmt = "latest"
+
 # The tools in ~/go/bin on the Mac
 buf = "latest"
 golangci-lint = "latest"

@@ -5,7 +5,7 @@
   insteadOf = https://github.com/
 {{- else -}}
 # Git settings for Linux. ~/.gitconfig includes this file.
-# The workspace has no SSH key for GitHub. Git uses HTTPS with the token from "gh auth login".
+# HTTPS URLs use the token from "gh auth login". SSH URLs use ~/.ssh/id_ed25519, which has SSO for mx51.
 
 [credential "https://github.com"]
   helper =
