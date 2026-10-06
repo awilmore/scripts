@@ -12,7 +12,9 @@ export GPG_TTY=$(tty)
 source $SCRIPTS_DIR/keep/mygitprompt.sh
 export GOS="$HOME/go/src/github.com/mx51"
 
-export PS1='\[\033[1;36m\][\[\033[0;34m\]($(date +"%d %H:%M")) \[\033[1;36m\]$(gos_path)\[$(git_colour)\]$(git_status)\[\033[1;36m\]]\[\e[0m\] '
+# The colour of the brackets and the path. An OS file can set it. The default is cyan.
+PS1_COLOUR="${PS1_COLOUR:-1;36}"
+export PS1='\[\033['"$PS1_COLOUR"'m\][\[\033[0;34m\]($(date +"%d %H:%M")) \[\033['"$PS1_COLOUR"'m\]$(gos_path)\[$(git_colour)\]$(git_status)\[\033['"$PS1_COLOUR"'m\]]\[\e[0m\] '
 
 
 ####################

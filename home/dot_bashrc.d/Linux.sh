@@ -6,6 +6,9 @@
 
 export PATH="$HOME/.local/bin:$PATH"
 
+# The colour of the brackets and the path in PS1 (dark green). common.sh uses it.
+PS1_COLOUR='0;32'
+
 # mise puts the user tools on the PATH. A non-interactive shell (for example "ssh ws <command>") uses the shims.
 if command -v mise > /dev/null; then
   if [[ $- == *i* ]]; then
