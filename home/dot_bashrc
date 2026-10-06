@@ -1,0 +1,12 @@
+# Bash configuration. chezmoi installs this file from awilmore/scripts.
+# This file loads the part for this OS first, then the part for all systems.
+
+case "$(uname -s)" in
+  Darwin) export SCRIPTS_DIR="$HOME/git/scripts" ;;
+  *) export SCRIPTS_DIR="$HOME/.local/share/chezmoi" ;;
+esac
+
+for rc_file in "$HOME/.bashrc.d/$(uname -s).sh" "$HOME/.bashrc.d/common.sh"; do
+  [ -r "$rc_file" ] && . "$rc_file"
+done
+unset rc_file

@@ -1,0 +1,11 @@
+# Target files that chezmoi does not install on each OS.
+{{- if ne .chezmoi.os "darwin" }}
+.gvimrc
+.tmux.darwin.conf
+.bashrc.d/Darwin.sh
+{{- end }}
+{{- if ne .chezmoi.os "linux" }}
+.tmux.linux.conf
+.bashrc.d/Linux.sh
+.config/mise
+{{- end }}

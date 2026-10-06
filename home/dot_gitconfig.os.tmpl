@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "darwin" -}}
+# Git settings for macOS. ~/.gitconfig includes this file.
+
+[url "git@github.com:"]
+  insteadOf = https://github.com/
+{{- else -}}
+# Git settings for Linux. ~/.gitconfig includes this file.
+# The workspace has no SSH key for GitHub. Git uses HTTPS with the token from "gh auth login".
+
+[credential "https://github.com"]
+  helper =
+  helper = !/usr/bin/gh auth git-credential
+
+[credential "https://gist.github.com"]
+  helper =
+  helper = !/usr/bin/gh auth git-credential
+{{- end }}

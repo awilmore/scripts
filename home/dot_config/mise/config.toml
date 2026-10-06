@@ -1,0 +1,21 @@
+# User tools for the Linux workspace. chezmoi does not install this file on macOS.
+# If you change this file, "chezmoi apply" runs the install script again.
+
+[tools]
+go = "1.27"
+uv = "latest"
+python = "3.14"
+kubectl = "1.33"
+helm = "latest"
+k9s = "latest"
+kubectx = "latest"
+stern = "latest"
+opentofu = "1.13"
+fzf = "latest"
+
+# The tools in ~/go/bin on the Mac
+buf = "latest"
+golangci-lint = "latest"
+"go:github.com/mfridman/tparse" = "latest"
+"go:google.golang.org/protobuf/cmd/protoc-gen-go" = "latest"
+"go:connectrpc.com/connect/cmd/protoc-gen-connect-go" = "latest"

@@ -1,0 +1,7 @@
+# chezmoi configuration. chezmoi makes this file from this template at "chezmoi init".
+# In symlink mode, chezmoi links most target files to the source files in this repo.
+# Thus, a change to a source file has an effect immediately.
+mode = "symlink"
+{{- if eq .chezmoi.os "darwin" }}
+sourceDir = {{ joinPath .chezmoi.homeDir "git/scripts" | quote }}
+{{- end }}
