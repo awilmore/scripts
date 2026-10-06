@@ -23,12 +23,22 @@ map <C-j> <C-W>=<C-W>w
 map <C-k> <C-W>w<C-W>_
 
 " Cut-n-Paste
-vmap <C-C> "+y
-nmap <C-V> "+gP
-imap <C-V> <ESC><C-V>i
-vmap <D-C> "+y
-nmap <D-V> "+gP
-imap <D-V> <ESC><D-V>i
+if has('clipboard')
+  vmap <C-C> "+y
+  nmap <C-V> "+gP
+  imap <C-V> <ESC><C-V>i
+  vmap <D-C> "+y
+  nmap <D-V> "+gP
+  imap <D-V> <ESC><D-V>i
+else
+  " This vim has no clipboard (for example, on the remote workspace).
+  " Send the yanked text to the local clipboard with OSC 52 (a terminal code that works over SSH and mosh).
+  function! s:Osc52Yank() abort
+    let l:b64 = system('base64 | tr -d "\n"', getreg('"'))
+    call writefile(["\e]52;c;" . l:b64 . "\x07"], '/dev/tty', 'b')
+  endfunction
+  vnoremap <C-C> y:call <SID>Osc52Yank()<CR>
+endif
 
 " Cut-n-Paste on OSX
 "vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>

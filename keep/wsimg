@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# Copy the image on the Mac clipboard to the remote workspace.
+# Then put the remote path of the image on the Mac clipboard.
+# Paste the path into Claude Code on the workspace (Cmd+V), and Claude Code attaches the image.
+#
+# usage: wsimg [ssh_host]   (default host: ws)
+
+set -euo pipefail
+
+HOST="${1:-ws}"
+NAME="clip-$(date +%Y%m%d-%H%M%S).png"
+TMP="$(mktemp -t wsimg)"
+trap 'rm -f "$TMP"' EXIT
+
+# Write the clipboard image to a PNG file. This fails if the clipboard has no image.
+if ! osascript \
+  -e 'set png_data to (the clipboard as «class PNGf»)' \
+  -e "set fp to open for access POSIX file \"$TMP\" with write permission" \
+  -e 'write png_data to fp' \
+  -e 'close access fp' >/dev/null 2>&1; then
+  echo "wsimg: the clipboard has no image" >&2
+  exit 1
+fi
+
+# Send the file in one SSH connection. Delete images older than 7 days. Print the full remote path.
+# $NAME expands on the Mac on purpose.
+# shellcheck disable=SC2029
+REMOTE_PATH="$(ssh "$HOST" "mkdir -p ~/.cache/clipimg && cd ~/.cache/clipimg \
+  && find . -name 'clip-*.png' -mtime +7 -delete \
+  && cat > '$NAME' && echo \"\$PWD/$NAME\"" < "$TMP")"
+
+printf '%s' "$REMOTE_PATH" | pbcopy
+echo "wsimg: copied to $HOST:$REMOTE_PATH. The path is on the clipboard. Push Cmd+V in Claude Code."
