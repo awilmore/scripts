@@ -3,9 +3,11 @@
 .gvimrc
 .tmux.darwin.conf
 .bashrc.d/Darwin.sh
+Library
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 .tmux.linux.conf
 .bashrc.d/Linux.sh
 .config/mise
+.local/bin/xclip
 {{- end }}

@@ -1,0 +1,23 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Load the launchd agent for the clipboard bridge (Mac only).
+# chezmoi runs this script again only when the plist changes.
+# plist hash: {{ include "private_Library/LaunchAgents/com.adam.clip-serve.plist.tmpl" | sha256sum }}
+set -euo pipefail
+
+label="com.adam.clip-serve"
+plist="$HOME/Library/LaunchAgents/$label.plist"
+domain="gui/$(id -u)"
+
+# Unload the old agent first. bootstrap can fail for a short time after bootout, so try again.
+launchctl bootout "$domain/$label" 2> /dev/null || true
+for _ in 1 2 3 4 5; do
+  if launchctl bootstrap "$domain" "$plist"; then
+    echo "loaded $label"
+    exit 0
+  fi
+  sleep 1
+done
+echo "could not load $label" >&2
+exit 1
+{{- end }}

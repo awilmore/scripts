@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Write the image on the Mac clipboard to standard output as PNG.
+# If the clipboard has no image, write nothing.
+#
+# The launchd agent com.adam.clip-serve runs this script for each connection to 127.0.0.1:18452.
+# The xclip stand-in on the remote workspace connects to that port through an SSH tunnel.
+# wsimg also uses this script.
+#
+# usage: clip-serve
+
+set -euo pipefail
+
+TMP="$(mktemp -t clip-serve)"
+trap 'rm -f "$TMP"' EXIT
+
+# osascript fails if the clipboard has no image. Then the file stays empty.
+if osascript \
+  -e 'set png_data to (the clipboard as «class PNGf»)' \
+  -e "set fp to open for access POSIX file \"$TMP\" with write permission" \
+  -e 'write png_data to fp' \
+  -e 'close access fp' > /dev/null 2>&1; then
+  cat "$TMP"
+fi

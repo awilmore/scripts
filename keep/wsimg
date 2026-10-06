@@ -13,20 +13,18 @@ NAME="clip-$(date +%Y%m%d-%H%M%S).png"
 TMP="$(mktemp -t wsimg)"
 trap 'rm -f "$TMP"' EXIT
 
-# Write the clipboard image to a PNG file. This fails if the clipboard has no image.
-if ! osascript \
-  -e 'set png_data to (the clipboard as «class PNGf»)' \
-  -e "set fp to open for access POSIX file \"$TMP\" with write permission" \
-  -e 'write png_data to fp' \
-  -e 'close access fp' >/dev/null 2>&1; then
+# Write the clipboard image to a PNG file. clip-serve is in the same folder.
+"$(dirname "$0")/clip-serve" > "$TMP"
+if [ ! -s "$TMP" ]; then
   echo "wsimg: the clipboard has no image" >&2
   exit 1
 fi
 
 # Send the file in one SSH connection. Delete images older than 7 days. Print the full remote path.
-# $NAME expands on the Mac on purpose.
+# ClearAllForwardings stops the RemoteForward of "Host ws". Thus no warning shows if another
+# connection already uses the port. $NAME expands on the Mac on purpose.
 # shellcheck disable=SC2029
-REMOTE_PATH="$(ssh "$HOST" "mkdir -p ~/.cache/clipimg && cd ~/.cache/clipimg \
+REMOTE_PATH="$(ssh -o ClearAllForwardings=yes "$HOST" "mkdir -p ~/.cache/clipimg && cd ~/.cache/clipimg \
   && find . -name 'clip-*.png' -mtime +7 -delete \
   && cat > '$NAME' && echo \"\$PWD/$NAME\"" < "$TMP")"
 

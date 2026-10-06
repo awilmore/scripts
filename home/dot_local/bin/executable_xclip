@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# xclip stand-in for the remote workspace. The workspace has no X display and no real xclip.
+#
+# Claude Code on Linux runs these two commands when you push Ctrl+V:
+#   xclip -selection clipboard -t TARGETS -o     (Is an image on the clipboard?)
+#   xclip -selection clipboard -t image/png -o   (Write the image.)
+# This script gets the image of the Mac clipboard from 127.0.0.1:18452. An SSH tunnel
+# (RemoteForward in "Host ws") connects that port to the clip-serve agent on the Mac.
+# For all other calls, the script exits with code 1.
+#
+# Settings (environment variables, for the tests):
+#   XCLIP_BRIDGE_PORT   The port of the tunnel. The default is 18452.
+#   XCLIP_BRIDGE_HOST   The address of the tunnel. The default is 127.0.0.1.
+
+set -uo pipefail
+
+PORT="${XCLIP_BRIDGE_PORT:-18452}"
+HOST="${XCLIP_BRIDGE_HOST:-127.0.0.1}"
+# The longest time for one transfer, in seconds. If no tunnel is open, the connection fails at once.
+MAX_SECONDS=15
+
+selection="primary"
+target=""
+out=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -selection | -sel | -se)
+      selection="${2:-}"
+      shift
+      ;;
+    -target | -t)
+      target="${2:-}"
+      shift
+      ;;
+    -out | -o) out=1 ;;
+    *) ;;
+  esac
+  shift
+done
+
+if [ "$out" -ne 1 ] || [ "$selection" != "clipboard" ]; then
+  echo "xclip: this stand-in can only read the clipboard image (-selection clipboard -t TARGETS|image/png -o)" >&2
+  exit 1
+fi
+
+# Write the PNG from the tunnel to the file $1. The file is empty if the tunnel is not open
+# or if the Mac clipboard has no image.
+fetch() {
+  # The inner bash expands $1 and $2, so the single quotes are correct.
+  # shellcheck disable=SC2016
+  local read_tunnel='exec 3<> "/dev/tcp/$1/$2" && cat <&3'
+  # The Mac has no "timeout" command. The tests run there too.
+  if command -v timeout > /dev/null; then
+    timeout "$MAX_SECONDS" bash -c "$read_tunnel" _ "$HOST" "$PORT" > "$1" 2> /dev/null
+  else
+    bash -c "$read_tunnel" _ "$HOST" "$PORT" > "$1" 2> /dev/null
+  fi
+}
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+case "$target" in
+  TARGETS)
+    fetch "$tmp"
+    if [ -s "$tmp" ]; then
+      echo "image/png"
+      exit 0
+    fi
+    ;;
+  image/png)
+    fetch "$tmp"
+    if [ -s "$tmp" ]; then
+      cat "$tmp"
+      exit 0
+    fi
+    ;;
+  *) ;;
+esac
+exit 1
