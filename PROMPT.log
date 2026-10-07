@@ -1,0 +1,17 @@
+# PROMPT LOG
+
+
+Please read `INIT_SESSION.md` to get an idea about this project. When ready, please implement the following task.
+
+I would like to update the `keep/bastion-tunnel.sh` script so that it can take an argument in either of the following formats:
+
+- Full ID: `/subscriptions/879b3461-ae43-432e-a410-1bb755c8115e/resourceGroups/rg-vm-live-pay4-aea/providers/Microsoft.Compute/virtualMachines/cloud-pay4-1`
+- Just VM name: `pay4`
+
+Please use subagents for this task, if necessary, to optimise your context window. Try not to go above 200K. Do not go above 5 subagents.
+
+Please ensure the global knowledge base is referenced as necessary, and updated if useful knowledge should be recorded from performing this task.
+
+**IMPORTANT: Please use the `simple-english` skill for documents, code comments as well as for any questions or responses for me, Adam, the human user.**
+
+Please ask me any questions you need clarifying before proceeding.
