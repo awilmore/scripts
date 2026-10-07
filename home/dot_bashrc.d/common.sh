@@ -261,6 +261,7 @@ alias claude="claude --permission-mode auto"
 alias claudesafe="~/.local/bin/claude"
 
 alias kb="cd $HOME/claude/knowledge-base"
+alias remote="cd $HOME/git/vibe/remote-workspace"
 
 claude-whoami() {
   python3 -c "
