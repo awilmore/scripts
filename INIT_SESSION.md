@@ -8,7 +8,7 @@ Personal dotfiles and helper scripts for Adam, for macOS and Linux.
 - `home/dot_bashrc.d/`: shell functions and aliases. `common.sh` is for all systems, `Darwin.sh` is for macOS, `Linux.sh` is for Linux. On this Mac, `~/.bashrc.d/*.sh` are symlinks to these files, so an edit is live after `source`.
 - `config/`, `diff/`, `keep/`, `linux/`, `prompts/`, `stress/`, `working/`: older scripts and notes.
 - `keep/` is in `PATH` on the Mac and on the workspace. `keep/aws-sso` gets temporary keys for the company AWS accounts. On Linux, it logs in with `--use-device-code`. On the Mac, `/usr/local/bin/aws-sso` comes first in `PATH`.
-- `keep/bastion-tunnel.sh` opens an RDP tunnel to a live Azure VM through Bastion (local port 3333). It takes a full VM resource ID or a short name. For example, `pay4` gives group `rg-vm-live-pay4-aea` and VM `cloud-pay4-1`.
+- `keep/bastion-tunnel.sh` opens an RDP tunnel to a live Azure VM through Bastion (local port 3333). It takes a full VM resource ID or a short name such as `pay4`. For a short name, it finds the VM in group `rg-vm-live-<name>-aea` with `az vm list`. If the group has two or more VMs, it shows a list. It reads `<vm>-user` and `<vm>-pass` (or `password`) from Key Vault `live-pos-vms-<name>` and copies the password to the clipboard.
 - `home/dot_aws/config` becomes `~/.aws/config` (the company AWS profiles). It holds no keys.
 
 ## Notes

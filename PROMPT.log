@@ -15,3 +15,27 @@ Please ensure the global knowledge base is referenced as necessary, and updated 
 **IMPORTANT: Please use the `simple-english` skill for documents, code comments as well as for any questions or responses for me, Adam, the human user.**
 
 Please ask me any questions you need clarifying before proceeding.
+
+
+-----
+
+
+What would it take to be able to look up the VM ID, based on the name in the ARG, eg. `pay4` or `kitomba`? Also, what would it take to get the password from the related keyvault secret?
+
+
+-----
+
+
+The command:
+
+```
+az keyvault secret list --vault-name live-pos-vms-pay4 --query '[].name' -o tsv
+```
+
+Fails with an error caused by Warp:
+
+```
+[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1010)
+```
+
+Are you able to work out what domain I need to bypass in Warp for the command to work?
