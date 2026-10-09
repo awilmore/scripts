@@ -1,0 +1,84 @@
+#!/bin/bash
+#
+# say stand-in for the remote workspace. Linux has no say command.
+#
+# The script sends the text to 127.0.0.1:18454. An SSH tunnel (RemoteForward in "Host ws")
+# connects that port to the say-serve agent on the Mac, which speaks the text with the Mac say.
+#
+# Usage: say [-v voice] [-r rate] [text ...]
+#   If you give no text, the script reads the text from stdin.
+#   The script does not accept the other options of the Mac say, for example -o or -a.
+#
+# Settings (environment variables, for the tests):
+#   SAY_BRIDGE_PORT   The port of the tunnel. The default is 18454.
+#   SAY_BRIDGE_HOST   The address of the tunnel. The default is 127.0.0.1.
+
+set -uo pipefail
+
+PORT="${SAY_BRIDGE_PORT:-18454}"
+HOST="${SAY_BRIDGE_HOST:-127.0.0.1}"
+# The longest time to send the text, in seconds. If no tunnel is open, the connection fails at once.
+MAX_SECONDS=5
+
+usage() {
+  echo "usage: say [-v voice] [-r rate] [text ...]" >&2
+  exit 1
+}
+
+voice=""
+rate=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -v | --voice)
+      [ $# -ge 2 ] || usage
+      voice="$2"
+      shift 2
+      ;;
+    --voice=*)
+      voice="${1#--voice=}"
+      shift
+      ;;
+    -r | --rate)
+      [ $# -ge 2 ] || usage
+      rate="$2"
+      shift 2
+      ;;
+    --rate=*)
+      rate="${1#--rate=}"
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "say: this stand-in accepts only -v and -r, not $1" >&2
+      usage
+      ;;
+    *) break ;;
+  esac
+done
+
+if [ "$voice" = "?" ]; then
+  echo "say: this stand-in cannot list the voices. Run 'say -v ?' on the Mac." >&2
+  exit 1
+fi
+
+if [ $# -gt 0 ]; then
+  text="$*"
+else
+  text="$(cat)"
+fi
+
+# The inner bash expands $1 to $5, so the single quotes are correct.
+# shellcheck disable=SC2016
+send='printf "%s\n%s\n%s\n" "$3" "$4" "$5" > "/dev/tcp/$1/$2"'
+# The Mac has no "timeout" command. The tests run there too.
+if command -v timeout > /dev/null; then
+  timeout "$MAX_SECONDS" bash -c "$send" _ "$HOST" "$PORT" "$voice" "$rate" "$text" 2> /dev/null
+else
+  bash -c "$send" _ "$HOST" "$PORT" "$voice" "$rate" "$text" 2> /dev/null
+fi || {
+  echo "say: no tunnel to the Mac on $HOST:$PORT. Connect with 'ssh ws', or run 'make tunnel' on the Mac." >&2
+  exit 1
+}

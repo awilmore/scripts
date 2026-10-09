@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd agent for the say tunnel (Mac only).
+  launchd listens on 127.0.0.1:18454. For each connection, it runs keep/say-serve,
+  which speaks the text from the connection with the Mac say.
+  The agent runs in the GUI session (Aqua), so that say can use the speakers.
+  This file is a chezmoi template, so chezmoi writes a real file and not a symlink.
+  launchd can refuse a plist that is a symlink.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.adam.say-serve</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>{{ .chezmoi.workingTree }}/keep/say-serve</string>
+  </array>
+  <key>inetdCompatibility</key>
+  <dict>
+    <key>Wait</key>
+    <false/>
+  </dict>
+  <key>Sockets</key>
+  <dict>
+    <key>Listeners</key>
+    <dict>
+      <key>SockNodeName</key>
+      <string>127.0.0.1</string>
+      <key>SockServiceName</key>
+      <string>18454</string>
+      <key>SockType</key>
+      <string>stream</string>
+      <key>SockFamily</key>
+      <string>IPv4</string>
+    </dict>
+  </dict>
+  <key>LimitLoadToSessionType</key>
+  <string>Aqua</string>
+</dict>
+</plist>

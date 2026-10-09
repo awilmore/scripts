@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# Speak text from the remote workspace with the Mac "say" command.
+#
+# The launchd agent com.adam.say-serve runs this script for each connection to 127.0.0.1:18454.
+# The say stand-in on the remote workspace connects to that port through an SSH tunnel.
+# The connection is stdin. The protocol is:
+#   Line 1: the voice name, or an empty line for the default voice.
+#   Line 2: the rate in words for each minute, or an empty line for the default rate.
+#   The other lines: the text to speak.
+# The script reads 4000 characters of text at most. It sends the text to say on stdin,
+# so that the text cannot become a say option.
+#
+# Settings (environment variables, for the tests):
+#   SAY_CMD   The say command. The default is /usr/bin/say.
+
+set -uo pipefail
+
+say_cmd="${SAY_CMD:-/usr/bin/say}"
+MAX_CHARS=4000
+
+# Wait 2 seconds at most for each line. Remove a carriage return at the end.
+read_line() {
+  local line=""
+  IFS= read -r -t 2 line || [ -n "$line" ] || return 1
+  printf '%s' "${line%$'\r'}"
+}
+
+voice="$(read_line)" || exit 1
+rate="$(read_line)" || exit 1
+
+text=""
+while line="$(read_line)"; do
+  text+="$line"$'\n'
+  if [ "${#text}" -ge "$MAX_CHARS" ]; then
+    text="${text:0:$MAX_CHARS}"
+    break
+  fi
+done
+
+# Accept only safe voice names, for example "Fred" or "Good News", and a rate of digits only.
+if ! [[ "$voice" =~ ^[A-Za-z0-9\ ._()-]{0,40}$ ]] || ! [[ "$rate" =~ ^[0-9]{0,3}$ ]]; then
+  exit 1
+fi
+if [ -z "${text//[[:space:]]/}" ]; then
+  exit 1
+fi
+
+args=()
+if [ -n "$voice" ]; then args+=(-v "$voice"); fi
+if [ -n "$rate" ]; then args+=(-r "$rate"); fi
+# The Mac /bin/bash is version 3.2. It stops on "${args[@]}" with "set -u" if the array is empty.
+printf '%s' "$text" | "$say_cmd" ${args[@]+"${args[@]}"}
