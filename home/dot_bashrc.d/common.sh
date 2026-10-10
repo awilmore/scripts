@@ -123,6 +123,9 @@ export EDITOR=vim
 # Secrets. The file is not in git. Copy it to each system by hand.
 [ -r $HOME/.secrets ] && source $HOME/.secrets
 
+# Azure scripts
+export TF_IMPLEMENTATION_AZURE_DIR=$HOME/git/devops/tf/tf-implementation-azure
+
 
 ####################
 # WORKSPACE setup
