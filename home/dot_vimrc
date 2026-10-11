@@ -40,6 +40,14 @@ else
   vnoremap <C-C> y:call <SID>Osc52Yank()<CR>
 endif
 
+" AI agent prompts from the work-utils tools (leader key + a, then one letter).
+" Each map puts the prompt on new lines below the cursor line.
+" The tools must be on the PATH, with the --print option (work-utils 2026-10-11 or later).
+nnoremap <silent> <Leader>ap :read !please --print<CR>
+nnoremap <silent> <Leader>ac :read !clarify --print<CR>
+nnoremap <silent> <Leader>ai :read !interact --print<CR>
+nnoremap <silent> <Leader>ax :read !concerned --print<CR>
+
 " Cut-n-Paste on OSX
 "vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>
 "nmap <C-v> :call setreg("\"",system("pbpaste"))<CR>p

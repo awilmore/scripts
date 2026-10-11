@@ -125,6 +125,7 @@ export EDITOR=vim
 
 # Azure scripts
 export TF_IMPLEMENTATION_AZURE_DIR=$HOME/git/devops/tf/tf-implementation-azure
+export OPENVPN_CLIENTS_DIR=$HOME/git/devops/openvpn-clients
 
 
 ####################
