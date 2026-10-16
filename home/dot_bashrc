@@ -10,3 +10,4 @@ for rc_file in "$HOME/.bashrc.d/$(uname -s).sh" "$HOME/.bashrc.d/common.sh"; do
   [ -r "$rc_file" ] && . "$rc_file"
 done
 unset rc_file
+. "$HOME/.cargo/env"

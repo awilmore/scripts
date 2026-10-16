@@ -154,7 +154,6 @@ alias eip="evil-ip.sh"
 alias c='cd ..'
 alias lsd='ls -lartd */'
 alias lad='ls -lartd */'
-alias lart='la'
 alias acklong='ack -C 2'
 alias acki='ack -i'
 alias acks='ack --color --noxyz -i -g'

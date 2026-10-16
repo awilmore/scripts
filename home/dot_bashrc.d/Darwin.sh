@@ -276,7 +276,8 @@ claude-personal() {
 # Gemini
 ###################
 
-alias gemini="$HOME/.nvm/versions/node/v24.4.0/bin/gemini --model gemini-3.1-pro-preview --approval-mode=auto_edit"
+#alias gemini="$HOME/.nvm/versions/node/v24.4.0/bin/gemini --model gemini-3.1-pro-preview --approval-mode=auto_edit"
+alias gemini="$HOME/.nvm/versions/node/v24.4.0/bin/gemini --model gemini-4-argon --approval-mode=auto_edit"
 
 
 ###################
