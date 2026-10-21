@@ -13,5 +13,5 @@ Personal dotfiles and helper scripts for Adam, for macOS and Linux.
 
 ## Notes
 
-- `Darwin.sh` has `window_place`, which moves an app window to the top-right corner of the external monitor with `osascript -l JavaScript`. The terminal must have the Accessibility permission. `sgit` (SmartGit, 80% width, full height) and `md` (Typora, 70% width, 90% height) use it.
+- `home/dot_hammerspoon/init.lua` becomes `~/.hammerspoon/init.lua` (a chezmoi symlink, macOS only). Hammerspoon (`brew install --cask hammerspoon`) moves each new standard window of Typora (70% width, 90% height) and SmartGit (80% width, full height) to the top-right corner of the external monitor, from any start (Finder, Dock, `md`, `sgit`). Hammerspoon must have the Accessibility permission. To load a change, run `hs -c "hs.reload()"`. The `md` and `smartgit` shell functions only start the apps.
 - After a change to a shell file, run `bash -n <file>` to make sure that the syntax is correct.

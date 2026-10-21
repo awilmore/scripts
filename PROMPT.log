@@ -39,3 +39,24 @@ Fails with an error caused by Warp:
 ```
 
 Are you able to work out what domain I need to bypass in Warp for the command to work?
+
+
+
+-----
+
+
+Please read `INIT_SESSION.md` to get an idea about this project. When ready, please implement the following task.
+
+At some point, the aliases/functions for running `md` and `sgit` were updated with logic to arrange the window on my second monitor.
+
+Is it possible that, instead of the `md` and `sgit` functions having the logic, instead, any time something launches Typora or SmartGit, it applies the same arrangement function?
+
+Please use subagents for this task, if necessary, to optimise your context window. Try not to go above 200K. Do not go above 5 subagents.
+
+Please ensure the global knowledge base is referenced as necessary, and updated if useful knowledge should be recorded from performing this task. If you update the KB, be sure to finish by running the command:
+
+`say -v fred "Knowledge base has been updated."`
+
+**IMPORTANT: Please use the `simple-english` skill for documents, code comments as well as for any questions or responses for me, Adam, the human user.**
+
+Please ask me any questions you need clarifying before proceeding.
