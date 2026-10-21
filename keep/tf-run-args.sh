@@ -38,5 +38,10 @@ export TERRAGRUNT_LOCAL=false
 # Source secrets
 source $HOME/.secrets
 
+# Terraform arguments. Set ARGS in the environment to use other targets, for example:
+#   ARGS="-target='helm_release.extra[\"azure-devops-exporter\"]'" tf-run-args.sh 567505611260 mx-admin-tools tools/live/eks/config make plan
+# Keep the single quotes: the Makefile puts ARGS into a shell command.
+ARGS="${ARGS:--target=helm_release.grafana-k8s-monitoring -target=helm_release.splunk_otel_collector}"
+
 # Run command
-time SUBFOLDER=$SUBF ARGS="-target=helm_release.grafana-k8s-monitoring -target=helm_release.splunk_otel_collector" make $TARGET
+time SUBFOLDER=$SUBF ARGS="$ARGS" make $TARGET
