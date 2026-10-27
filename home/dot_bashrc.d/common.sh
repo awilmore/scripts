@@ -299,6 +299,15 @@ label() {
   fi
 }
 
+# Set a label on the current tmux pane. The top border of the pane shows it. With no text, remove the label.
+plabel() {
+  if [ $# -eq 0 ]; then
+    tmux set-option -p -t "$TMUX_PANE" -u @plabel
+  else
+    tmux set-option -p -t "$TMUX_PANE" @plabel "$*"
+  fi
+}
+
 # Only run in interactive shells, outside tmux, if the attach script is installed.
 if [[ $- == *i* ]] && [ -z "$TMUX" ] && [ -x $HOME/.local/bin/tmuxattachsession ]; then
   $HOME/.local/bin/tmuxattachsession
