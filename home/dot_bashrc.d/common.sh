@@ -299,13 +299,39 @@ label() {
   fi
 }
 
-# Set a label on the current tmux pane. The top border of the pane shows it. With no text, remove the label.
+# Set a label on the current tmux pane. The top border of the pane shows it.
+#   plabel some text   Set the label to "some text".
+#   plabel -d          Remove the label.
+#   plabel             Copy the label of the parent pane: its @plabel, else its title if the title is not the host name.
+#                      The split keys in ~/.tmux.conf save the parent in the pane option @parent_pane.
+#                      If there is no parent label, copy the title of another pane in the window that is not
+#                      the host name (usually the Claude Code topic).
 plabel() {
-  if [ $# -eq 0 ]; then
-    tmux set-option -p -t "$TMUX_PANE" -u @plabel
-  else
-    tmux set-option -p -t "$TMUX_PANE" @plabel "$*"
+  local pane="${TMUX_PANE:?plabel: not in tmux}"
+  if [ "$*" = "-d" ]; then
+    tmux set-option -p -t "$pane" -u @plabel
+    return
   fi
+  if [ $# -gt 0 ]; then
+    tmux set-option -p -t "$pane" @plabel "$*"
+    return
+  fi
+  local label_format='#{?#{@plabel},#{@plabel},#{?#{&&:#{pane_title},#{!=:#{pane_title},#{host_short}}},#{pane_title},}}'
+  local title_format='#{?#{&&:#{pane_title},#{!=:#{pane_title},#{host_short}}},#{pane_title},}'
+  local parent text=""
+  parent=$(tmux show-options -p -t "$pane" -v @parent_pane 2>/dev/null)
+  if [ -n "$parent" ]; then
+    text=$(tmux display-message -p -t "$parent" "$label_format" 2>/dev/null)
+  fi
+  if [ -z "$text" ]; then
+    text=$(tmux list-panes -t "$pane" -F "#{pane_id}	$title_format" |
+      awk -F '\t' -v self="$pane" '$1 != self && $2 != "" { print $2; exit }')
+  fi
+  if [ -z "$text" ]; then
+    echo "plabel: no parent pane label and no other pane with a title" >&2
+    return 1
+  fi
+  tmux set-option -p -t "$pane" @plabel "$text"
 }
 
 # Only run in interactive shells, outside tmux, if the attach script is installed.
