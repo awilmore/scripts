@@ -1,0 +1,84 @@
+#!/bin/bash
+#
+# Cmd-click handler for iTerm2 Semantic History ("Always run command...").
+#
+# iTerm2 cannot see the folder of a pane in plain tmux. Thus it cannot find a relative path,
+# and it opens the text as a web URL (for example http://working/CLAUDE_HANDOFF.md).
+# This script finds the file and opens it with the default app (Typora for .md files).
+#
+# iTerm2 configuration (Settings > Profiles > Advanced > Semantic History):
+#   Always run command...   /Users/adam/.local/bin/iterm-open-click \1 \5
+#
+# Usage: iterm-open-click <clicked text> [iTerm working directory]
+#   1. If the text is a URL, the script opens it in the browser.
+#   2. If the text is a path, the script looks for the file in these folders, in this sequence:
+#      the folder of the active tmux pane, the iTerm working directory, the home folder.
+#      It removes a ":line" or ":line:column" suffix.
+#   3. If the script finds no file, it shows a macOS notification.
+#
+# Settings (environment variables, for the tests):
+#   ITERM_OPEN_CLICK_OPENER   The command that opens a file or URL. The default is open.
+#   ITERM_OPEN_CLICK_TMUX     The tmux command. The default is tmux.
+
+set -uo pipefail
+
+# iTerm2 runs the command with a short PATH. Add the Homebrew folders for tmux.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+OPENER="${ITERM_OPEN_CLICK_OPENER:-open}"
+TMUX_CMD="${ITERM_OPEN_CLICK_TMUX:-tmux}"
+
+text="${1:-}"
+shift || true
+# iTerm2 can give a working directory with spaces as more than one argument.
+iterm_dir="$*"
+
+# Remove quotes, brackets and end punctuation that the click can include.
+lead_chars='"'"'"'`<(['
+trail_chars='"'"'"'`>)],.;:'
+text="${text#["$lead_chars"]}"
+text="${text%["$trail_chars"]}"
+
+if [[ -z "$text" ]]; then
+  exit 0
+fi
+
+# URLs (https://, file://, mailto: and so on) go to the default handler.
+if [[ "$text" =~ ^[A-Za-z][A-Za-z0-9+.-]*:// || "$text" =~ ^mailto: ]]; then
+  exec "$OPENER" "$text"
+fi
+if [[ "$text" =~ ^www\. ]]; then
+  exec "$OPENER" "https://$text"
+fi
+
+# Remove a ":line" or ":line:column" suffix, for example main.go:12:5.
+path="$text"
+for _ in 1 2; do
+  if [[ "$path" =~ ^(.+):[0-9]+$ ]]; then
+    path="${BASH_REMATCH[1]}"
+  fi
+done
+if [[ "$path" == "~" || "$path" == "~/"* ]]; then
+  path="$HOME${path#\~}"
+fi
+
+if [[ "$path" == /* ]]; then
+  dirs=("")
+else
+  pane_dir="$("$TMUX_CMD" display-message -p '#{pane_current_path}' 2>/dev/null || true)"
+  dirs=("$pane_dir" "$iterm_dir" "$HOME")
+fi
+
+for dir in "${dirs[@]}"; do
+  if [[ -n "$dir" ]]; then
+    candidate="$dir/$path"
+  else
+    candidate="$path"
+  fi
+  if [[ -e "$candidate" ]]; then
+    exec "$OPENER" "$candidate"
+  fi
+done
+
+osascript -e "display notification \"No file or URL found for: ${text//\"/}\" with title \"iterm-open-click\"" >/dev/null 2>&1
+exit 1

@@ -62,6 +62,7 @@ alias python="/opt/homebrew/bin/python3"
 alias charm="open -b com.jetbrains.pycharm"
 
 alias k9s='TERM=xterm-256color /opt/homebrew/bin/k9s'
+alias ado-ops='az-agent-pools'
 alias v='gvim -b '
 alias v.='gvim -b '
 alias vi='/opt/homebrew/bin/vim -b '

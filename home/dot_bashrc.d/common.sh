@@ -191,6 +191,7 @@ alias mx51io="docker login -u aquam8 -p $DOCKER_PW_MX"
 alias gos="cd $GOS"
 alias devops="cd ~/git/devops"
 alias tf="cd ~/git/devops/tf"
+alias say="say -v fred"
 
 
 ####################
@@ -288,6 +289,15 @@ alias cs="cswap switch"
 
 alias ta=tmuxattachsession
 alias tl=tmuxlistsessions
+
+# Set a label on the current tmux session. The tab title and the status bar show it. With no text, remove the label.
+label() {
+  if [ $# -eq 0 ]; then
+    tmux set-option -u @label
+  else
+    tmux set-option @label "$*"
+  fi
+}
 
 # Only run in interactive shells, outside tmux, if the attach script is installed.
 if [[ $- == *i* ]] && [ -z "$TMUX" ] && [ -x $HOME/.local/bin/tmuxattachsession ]; then

@@ -5,6 +5,7 @@
 .bashrc.d/Darwin.sh
 .hammerspoon
 Library
+.local/bin/iterm-open-click
 {{- end }}
 {{- if ne .chezmoi.os "linux" }}
 .tmux.linux.conf
