@@ -34,8 +34,8 @@
   pl = pull origin $(git_current_branch)
   p  = "!sh -c \"${SCRIPTS_DIR:-$HOME/git/scripts}/keep/gitp\""
   f  = fetch origin
-  fp = "!sh -c \"${SCRIPTS_DIR:-$HOME/git/scripts}/keep/gitp && git fetch origin && git fetch --tags\""
-  pf = "!sh -c \"${SCRIPTS_DIR:-$HOME/git/scripts}/keep/gitp && git fetch origin && git fetch --tags\""
+  fp = "!b=$(git rev-parse --abbrev-ref HEAD) && echo \"Pulling $b...\" && git fetch --tags origin && git merge --ff-only \"origin/$b\""
+  pf = "!b=$(git rev-parse --abbrev-ref HEAD) && echo \"Pulling $b...\" && git fetch --tags origin && git merge --ff-only \"origin/$b\""
   pu = "!sh -c \"git push origin `git rev-parse --abbrev-ref HEAD`\""
   s  = status
   t  = log --all --decorate --oneline --graph
