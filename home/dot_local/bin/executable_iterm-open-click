@@ -71,6 +71,8 @@ else
   # (tmux gets focus events from iTerm2 because ~/.tmux.conf sets focus-events on).
   # If no client has the flag, use the client with the latest activity.
   # Use the folder of the active pane of that client.
+  # iTerm2 runs this script with no UTF-8 locale. Then tmux changes each tab in the -F output
+  # to "_". The -u flag tells tmux to use UTF-8, so that tmux keeps the tabs.
   pane_dir=""
   focused_dir=""
   best=-1
@@ -85,7 +87,7 @@ else
         best=$activity
         pane_dir=$dir
       fi
-    done < <("$TMUX_CMD" -S "$socket" list-clients -F $'#{client_flags}\t#{client_activity}\t#{pane_current_path}' 2>/dev/null || true)
+    done < <("$TMUX_CMD" -u -S "$socket" list-clients -F $'#{client_flags}\t#{client_activity}\t#{pane_current_path}' 2>/dev/null || true)
   done
   if [[ -n "$focused_dir" ]]; then
     pane_dir=$focused_dir
