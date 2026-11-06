@@ -12,7 +12,8 @@
 # Usage: iterm-open-click <clicked text> [iTerm working directory]
 #   1. If the text is a URL, the script opens it in the browser.
 #   2. If the text is a path, the script looks for the file in these folders, in this sequence:
-#      the folder of the active tmux pane, the iTerm working directory, the home folder.
+#      the folder of the active tmux pane (of the focused tmux client on any tmux server),
+#      the iTerm working directory, the home folder.
 #      It removes a ":line" or ":line:column" suffix.
 #   3. If the script finds no file, it shows a macOS notification.
 #
@@ -65,7 +66,30 @@ fi
 if [[ "$path" == /* ]]; then
   dirs=("")
 else
-  pane_dir="$("$TMUX_CMD" display-message -p '#{pane_current_path}' 2>/dev/null || true)"
+  # Each iTerm2 tab can have its own tmux server (tmuxattachsession uses "tmux -L <session>").
+  # Ask each server for its clients. The tab that you clicked in has the "focused" flag
+  # (tmux gets focus events from iTerm2 because ~/.tmux.conf sets focus-events on).
+  # If no client has the flag, use the client with the latest activity.
+  # Use the folder of the active pane of that client.
+  pane_dir=""
+  focused_dir=""
+  best=-1
+  socket_dir="${TMUX_TMPDIR:-/tmp}/tmux-$(id -u)"
+  for socket in "$socket_dir"/*; do
+    [[ -S "$socket" ]] || continue
+    while IFS=$'\t' read -r flags activity dir; do
+      if [[ ",$flags," == *",focused,"* ]]; then
+        focused_dir=$dir
+      fi
+      if [[ "$activity" =~ ^[0-9]+$ ]] && ((activity > best)); then
+        best=$activity
+        pane_dir=$dir
+      fi
+    done < <("$TMUX_CMD" -S "$socket" list-clients -F $'#{client_flags}\t#{client_activity}\t#{pane_current_path}' 2>/dev/null || true)
+  done
+  if [[ -n "$focused_dir" ]]; then
+    pane_dir=$focused_dir
+  fi
   dirs=("$pane_dir" "$iterm_dir" "$HOME")
 fi
 
