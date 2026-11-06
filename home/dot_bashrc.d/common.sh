@@ -169,7 +169,6 @@ alias ch='claude -p hello'
 alias aw='az-watch-build'
 
 # Git
-alias pr="pr.sh"
 alias compare="compare.sh"
 
 # Git add commit push function
