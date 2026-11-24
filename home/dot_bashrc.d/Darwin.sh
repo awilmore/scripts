@@ -50,6 +50,11 @@ mkdir -p /tmp/vi_swap
 # WARP for Claude and Gemini
 export NODE_EXTRA_CA_CERTS="$HOME/.agents/warp.pem"
 
+# Android SDK, for Gradle builds and tests (for example the tap app)
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+# WARP's CA for Gradle: the tap app's Android scripts add it to a copy of JDK 17's truststore
+export MX51_CA_BUNDLE="$HOME/.agents/warp-ca-bundle.pem"
+
 
 ###
 # ALIAS shortcuts
