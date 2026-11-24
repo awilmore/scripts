@@ -1,21 +1,30 @@
 #!/bin/bash
 #
-# Cmd-click handler for iTerm2 Semantic History ("Always run command...").
+# Cmd-click handler for iTerm2 (Semantic History) and for Ghostty in tmux.
 #
 # iTerm2 cannot see the folder of a pane in plain tmux. Thus it cannot find a relative path,
 # and it opens the text as a web URL (for example http://working/CLAUDE_HANDOFF.md).
+# Ghostty cannot run a command on a click, and it finds only paths with a slash.
 # This script finds the file and opens it with the default app (Typora for .md files).
 #
 # iTerm2 configuration (Settings > Profiles > Advanced > Semantic History):
 #   Always run command...   /Users/adam/.local/bin/iterm-open-click \1 \5
 #
+# Ghostty configuration: Hammerspoon changes Cmd+click in Ghostty into Option+click, and
+# tmux (~/.tmux.darwin.conf) runs this script with --tmux on M-MouseDown1Pane.
+#
 # Usage: iterm-open-click <clicked text> [iTerm working directory]
+#        iterm-open-click --tmux <column> <pane folder> <hyperlink> <line text...>
 #   1. If the text is a URL, the script opens it in the browser.
 #   2. If the text is a path, the script looks for the file in these folders, in this sequence:
-#      the folder of the active tmux pane (of the focused tmux client on any tmux server),
+#      iTerm2: the folder of the active tmux pane (of the focused tmux client on any tmux server),
 #      the iTerm working directory, the home folder.
+#      tmux: the folder of the pane that you clicked, the home folder.
 #      It removes a ":line" or ":line:column" suffix.
 #   3. If the script finds no file, it shows a macOS notification.
+#   With --tmux, tmux gives the full line under the mouse and the column of the mouse (from 0).
+#   The script takes the word at that column. A word stops at a space, a quote, a bracket or a
+#   symbol such as a box line or a bullet. If the text has an OSC 8 hyperlink, the script opens it.
 #
 # Settings (environment variables, for the tests):
 #   ITERM_OPEN_CLICK_OPENER   The command that opens a file or URL. The default is open.
@@ -29,16 +38,73 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 OPENER="${ITERM_OPEN_CLICK_OPENER:-open}"
 TMUX_CMD="${ITERM_OPEN_CLICK_TMUX:-tmux}"
 
-text="${1:-}"
-shift || true
-# iTerm2 can give a working directory with spaces as more than one argument.
-iterm_dir="$*"
+# Print the word at a column of a line. A wide character (for example an emoji) uses two columns.
+word_at_column() {
+  python3 -c '
+import sys, unicodedata
 
-# Remove quotes, brackets and end punctuation that the click can include.
-lead_chars='"'"'"'`<(['
-trail_chars='"'"'"'`>)],.;:'
-text="${text#["$lead_chars"]}"
-text="${text%["$trail_chars"]}"
+col, line = int(sys.argv[1]), sys.argv[2]
+stop = set("\"'"'"'`<>()[]{}|")
+
+def is_word(ch):
+    return not (ch.isspace() or ch in stop or unicodedata.category(ch) in ("So", "Cc"))
+
+x = 0
+index = None
+for i, ch in enumerate(line):
+    width = 2 if unicodedata.east_asian_width(ch) in "WF" else 1
+    if x <= col < x + width:
+        index = i
+        break
+    x += width
+if index is None or not is_word(line[index]):
+    sys.exit(0)
+start = index
+while start > 0 and is_word(line[start - 1]):
+    start -= 1
+end = index + 1
+while end < len(line) and is_word(line[end]):
+    end += 1
+print(line[start:end])
+' "$1" "$2"
+}
+
+tmux_mode=false
+if [[ "${1:-}" == "--tmux" ]]; then
+  tmux_mode=true
+  column="${2:-}"
+  pane_dir="${3:-}"
+  link="${4:-}"
+  shift 4 2>/dev/null || set --
+  # tmux escapes the spaces in the line, but a tab can split it into more than one argument.
+  line="$*"
+  if [[ -n "$link" ]]; then
+    # Open an OSC 8 hyperlink. Remove the host from a file:// link, because open needs file:///path.
+    if [[ "$link" =~ ^file://[^/]*(/.*)$ ]]; then
+      link="file://${BASH_REMATCH[1]}"
+    fi
+    exec "$OPENER" "$link"
+  fi
+  if ! [[ "$column" =~ ^[0-9]+$ ]]; then
+    exit 0
+  fi
+  text="$(word_at_column "$column" "$line")"
+else
+  text="${1:-}"
+  shift || true
+  # iTerm2 can give a working directory with spaces as more than one argument.
+  iterm_dir="$*"
+fi
+
+# Remove quotes, brackets, Markdown marks and end punctuation that the click can include.
+lead_chars='"'"'"'`<([*_'
+trail_chars='"'"'"'`>)],.;:!?*_'
+while [[ -n "$text" && "${text:0:1}" == ["$lead_chars"] ]]; do
+  text="${text:1}"
+done
+while [[ -n "$text" && "${text: -1}" == ["$trail_chars"] ]]; do
+  text="${text%?}"
+done
 
 if [[ -z "$text" ]]; then
   exit 0
@@ -65,6 +131,8 @@ fi
 
 if [[ "$path" == /* ]]; then
   dirs=("")
+elif $tmux_mode; then
+  dirs=("$pane_dir" "$HOME")
 else
   # Each iTerm2 tab can have its own tmux server (tmuxattachsession uses "tmux -L <session>").
   # Ask each server for its clients. The tab that you clicked in has the "focused" flag
@@ -107,4 +175,8 @@ for dir in "${dirs[@]}"; do
 done
 
 osascript -e "display notification \"No file or URL found for: ${text//\"/}\" with title \"iterm-open-click\"" >/dev/null 2>&1
+# tmux shows a failed run-shell command over the pane. The notification is enough, so exit 0.
+if $tmux_mode; then
+  exit 0
+fi
 exit 1
