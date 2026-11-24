@@ -7,9 +7,9 @@
 # - Ghostty cannot colour a tab. For a Ghostty client, tmux puts a coloured dot at the start of the title.
 #   The Claude Code hook tab-colour.sh (agent-config) sets the dot.
 
-# Font and size of the iTerm2 profile.
+# Font of the iTerm2 profile (Monaco). Size 12 is one step (Cmd+-) smaller than the Ghostty default (13).
 font-family = Monaco
-font-size = 11
+font-size = 12
 
 # Colours of the iTerm2 profile.
 background = #232423
@@ -55,3 +55,8 @@ unfocused-split-opacity = 0.6
 
 # Programs can read the clipboard with OSC 52 (iTerm2: "Applications may access clipboard").
 clipboard-read = allow
+
+# Cmd+Left and Cmd+Right go to the previous and next tab.
+# These keys then do not move the cursor to the start or end of the line.
+keybind = super+arrow_left=previous_tab
+keybind = super+arrow_right=next_tab
