@@ -1,0 +1,57 @@
+# Ghostty configuration for the Mac. Ported from the iTerm2 "Default" profile on 2026-11-24.
+# chezmoi installs this file as ~/.config/ghostty/config.ghostty (Mac only).
+# Reload: Cmd+Shift+, in Ghostty. Docs: `ghostty +show-config --default --docs`.
+#
+# Tab labels and tab state come from tmux, not from this file:
+# - tmux sends the tab title (set-titles in ~/.tmux.conf).
+# - Ghostty cannot colour a tab. For a Ghostty client, tmux puts a coloured dot at the start of the title.
+#   The Claude Code hook tab-colour.sh (agent-config) sets the dot.
+
+# Font and size of the iTerm2 profile.
+font-family = Monaco
+font-size = 11
+
+# Colours of the iTerm2 profile.
+background = #232423
+foreground = #f8f8f8
+cursor-color = #c7c7c7
+cursor-text = #262626
+selection-background = #258695
+selection-foreground = #f8f8f8
+palette = 0=#000000
+palette = 1=#b84131
+palette = 2=#7da900
+palette = 3=#a58d00
+palette = 4=#056abd
+palette = 5=#ba72d4
+palette = 6=#258595
+palette = 7=#b0b0b0
+palette = 8=#666666
+palette = 9=#df968e
+palette = 10=#c4f137
+palette = 11=#fee45e
+palette = 12=#9cd8f3
+palette = 13=#faafff
+palette = 14=#79ded8
+palette = 15=#f8f8f8
+
+# Bold text uses the bright colours, as "Brighten bold text" did in iTerm2.
+bold-color = bright
+
+# Box cursor that does not blink.
+cursor-style = block
+cursor-style-blink = false
+
+# Size of a new window in cells (iTerm2: 190 columns, 60 rows).
+window-width = 190
+window-height = 60
+
+# Open the windows and tabs of the last session at start (iTerm2: "Open default arrangement").
+window-save-state = always
+
+# Focus follows the mouse between Ghostty splits, and an inactive split is dimmed (iTerm2: dim amount 0.39).
+focus-follows-mouse = true
+unfocused-split-opacity = 0.6
+
+# Programs can read the clipboard with OSC 52 (iTerm2: "Applications may access clipboard").
+clipboard-read = allow
