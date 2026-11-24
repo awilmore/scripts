@@ -60,3 +60,23 @@ Please ensure the global knowledge base is referenced as necessary, and updated 
 **IMPORTANT: Please use the `simple-english` skill for documents, code comments as well as for any questions or responses for me, Adam, the human user.**
 
 Please ask me any questions you need clarifying before proceeding.
+
+
+-----
+
+
+Please read `INIT_SESSION.md` to get an idea about this project. When ready, please implement the following task.
+
+I would like to update my tmux start up settings so I can support Ghostty terminals as well. They should prefix their session names with gh instead of it.
+
+I would also like to know how I can run `ta` to attach to a iterm session that starts with `it`, and vice versa.
+
+Please use subagents for this task, if necessary, to optimise your context window. Try not to go above 220K. Do not go above 8 subagents.
+
+Please ensure the global knowledge base is referenced as necessary, and updated if useful knowledge should be recorded from performing this task. If you update the KB, be sure to finish by running the command:
+
+`say -v fred "Knowledge base has been updated."`
+
+**IMPORTANT: Please use the `simple-english` skill for documents, code comments as well as for any questions or responses for me, Adam, the human user.**
+
+Please ask me any questions you need clarifying before proceeding.

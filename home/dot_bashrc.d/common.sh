@@ -288,6 +288,7 @@ alias cs="cswap switch"
 
 alias ta=tmuxattachsession
 alias tl=tmuxlistsessions
+alias td=tmuxdetachsession
 
 # Set a label on the current tmux session. The tab title and the status bar show it. With no text, remove the label.
 label() {
