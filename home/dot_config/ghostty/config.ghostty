@@ -60,3 +60,14 @@ clipboard-read = allow
 # These keys then do not move the cursor to the start or end of the line.
 keybind = super+arrow_left=previous_tab
 keybind = super+arrow_right=next_tab
+
+# The tabs sit in the title bar. Use the window fill (Window > Fill) in place of the native
+# full screen: the native full screen hides the tab bar, and the bar moves the text when it slides down.
+# This style applies only to new windows. To move the tabs, open a new window and use Window > Merge All Windows.
+macos-titlebar-style = tabs
+
+# A new window starts maximized (it fills the screen, but it is not full screen).
+maximize = true
+
+# A new tab (Cmd+T) opens at the right end of the tab bar, not next to the current tab.
+window-new-tab-position = end
